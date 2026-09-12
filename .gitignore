@@ -3,5 +3,6 @@ dist
 .DS_Store
 .env.wukong
 
+/logs
 /config
 /backup
