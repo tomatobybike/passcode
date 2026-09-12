@@ -4,3 +4,4 @@ dist
 .env.wukong
 
 /conifg
+/backup
