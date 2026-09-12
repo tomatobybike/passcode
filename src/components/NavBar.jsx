@@ -1,0 +1,62 @@
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Link from '@mui/material/Link';
+import SvgIcon from '@mui/material/SvgIcon';
+import ShieldIcon from '@mui/icons-material/Shield';
+import DownloadIcon from '@mui/icons-material/Download';
+
+const GITHUB = 'https://github.com/tomatobybike/passcode';
+
+function GitHubMark(props) {
+  return (
+    <SvgIcon viewBox="0 0 24 24" {...props}>
+      <path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z" />
+    </SvgIcon>
+  );
+}
+
+export default function NavBar({ version, downloadUrl }) {
+  return (
+    <AppBar
+      position="fixed"
+      elevation={0}
+      sx={{
+        background: 'rgba(255,255,255,0.82)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        color: 'text.primary',
+      }}
+    >
+      <Toolbar sx={{ maxWidth: 1200, width: '100%', mx: 'auto' }}>
+        <ShieldIcon sx={{ color: 'primary.main', mr: 1 }} />
+        <Typography variant="h6" sx={{ fontWeight: 700, flexShrink: 0 }}>
+          Passcode 密码箱
+        </Typography>
+        {version && (
+          <Chip size="small" label={`v${version}`} color="primary" variant="outlined" sx={{ ml: 1.5 }} />
+        )}
+        <Box sx={{ flexGrow: 1 }} />
+        <Tooltip title="GitHub 仓库">
+          <IconButton component={Link} href={GITHUB} target="_blank" rel="noreferrer" size="small">
+            <GitHubMark />
+          </IconButton>
+        </Tooltip>
+        <Button
+          variant="contained"
+          startIcon={<DownloadIcon />}
+          href={downloadUrl}
+          sx={{ ml: 1, borderRadius: 999, px: 2.5 }}
+        >
+          下载最新版
+        </Button>
+      </Toolbar>
+    </AppBar>
+  );
+}
