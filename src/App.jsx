@@ -30,7 +30,7 @@ export default function App() {
   return (
     <Box>
       <NavBar version={version?.version} downloadUrl={downloadUrl} />
-      <Hero version={version} downloadUrl={downloadUrl} />
+      <Hero version={version?.version} downloadUrl={downloadUrl} />
       <Features />
       <InstallSteps />
       <Changelog version={version} items={changelog} />
