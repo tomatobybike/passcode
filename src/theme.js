@@ -33,21 +33,35 @@ export const shadows = {
   },
 };
 
+/** 极淡描边：卡片静止态的边界几乎不可见，只保留一点分离感（hover 仍走绿色反馈） */
+export const hairline = {
+  light: 'rgba(17,17,17,0.06)',
+  dark: 'rgba(255,255,255,0.06)',
+};
+
 /**
- * 首屏背景：原版青蓝渐变，与全站绿色主色解耦，Hero 单独保留这套配色。
+ * 更新日志时间线的轮换配色：绿 → 青 → 蓝 → 琥珀，与首屏青蓝渐变呼应。
+ * 深色模式取更亮一档，保证 12px 日期小字在深底上的对比度（蓝色尤其需要提亮）。
+ */
+export const timelineAccents = [
+  { light: brand.green, dark: brand.greenLight },
+  { light: '#0EA5A4', dark: '#2DD4BF' },
+  { light: '#2563EB', dark: '#60A5FA' },
+  { light: '#F59E0B', dark: '#FBBF24' },
+];
+
+/**
+ * 首屏背景：青蓝渐变。Hero 与全站绿色主色并存，作为独立色块存在。
  */
 export const heroGradient = 'linear-gradient(135deg, #0F766E 0%, #0EA5A4 45%, #2563EB 100%)';
 
-/**
- * 首屏背景（暗黑模式）：同色相压暗版（青绿 → 青 → 蓝），保留大色块体积感，
- * 同时与深色页面的导航条、下方区块自然衔接，不再成为刺眼的「亮岛」。
- */
+/** 首屏背景（暗黑模式）：同色相压深版，与深色页面自然衔接，不成为「亮岛」 */
 export const heroGradientDark =
   'linear-gradient(135deg, #062E2C 0%, #0B5F5E 45%, #16307A 100%)';
 
 /**
  * 首屏强调色：白色主按钮上的文字色。
- * 取青绿深调（白底对比度约 5.6:1，满足 WCAG AA），与渐变首个色标同色，视觉更协调。
+ * #0F766E 在白底上对比度约 5.6:1，满足 WCAG AA。
  */
 export const heroAccent = '#0F766E';
 
@@ -70,19 +84,21 @@ export const float = keyframes`
  * 尊重 prefers-reduced-motion：系统关闭动效时直接不播。
  */
 export const enterSx = (delay = 0) => ({
-  animation: `${fadeInUp} .5s ease both`,
+  // fill-mode 用 backwards 而非 both：延迟期间保持「起点」不闪，播完后交还常规样式，
+  // 否则动画终帧会一直压制 hover 的 transform（卡片上浮会失效）。
+  animation: `${fadeInUp} .5s ease backwards`,
   animationDelay: `${delay}s`,
   '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
 });
 
-/** 通用卡片观感：细边框 + 柔和投影 + hover 上浮，深浅两套自动适配 */
+/** 通用卡片观感：极淡描边 + 柔和投影 + hover 上浮（hover 描边转绿），深浅两套自动适配 */
 export const surfaceCard = (theme) => {
   const tone = theme.palette.mode === 'dark' ? shadows.dark : shadows.light;
   return {
     height: '100%',
     bgcolor: 'background.paper',
     border: '1px solid',
-    borderColor: 'divider',
+    borderColor: theme.palette.mode === 'dark' ? hairline.dark : hairline.light,
     borderRadius: `${radius.card}px`,
     boxShadow: tone.rest,
     transition: 'transform .2s ease, box-shadow .2s ease, border-color .2s ease',
@@ -90,6 +106,27 @@ export const surfaceCard = (theme) => {
       transform: 'translateY(-4px)',
       boxShadow: tone.hover,
       borderColor: brand.green,
+    },
+  };
+};
+
+/**
+ * 无底色、无线框的卡片：与页面底色融为一体，只保留 hover 时的上浮与柔和投影。
+ * 用于靠留白而非卡片边界来组织的网格（如「为什么选它」）。
+ */
+export const ghostCard = (theme) => {
+  const tone = theme.palette.mode === 'dark' ? shadows.dark : shadows.light;
+  return {
+    height: '100%',
+    bgcolor: 'transparent',
+    backgroundImage: 'none',
+    border: 'none',
+    borderRadius: `${radius.card}px`,
+    boxShadow: 'none',
+    transition: 'transform .2s ease, box-shadow .2s ease',
+    '&:hover': {
+      transform: 'translateY(-4px)',
+      boxShadow: tone.hover,
     },
   };
 };
@@ -114,6 +151,8 @@ function createBaseTheme(mode) {
       success: { main: '#16A34A' },
       warning: { main: '#F59E0B' },
       error: { main: '#DC2626' },
+      // 大区块底色两档：default = 灰底档、paper = 白底档。
+      // 页面各大区块按「灰 → 白 → 灰 → 白 → 灰」交替区分边界（顺序见各区块组件），不加分隔线。
       background: isDark
         ? { default: '#111111', paper: '#1A1A1A' }
         : { default: '#F5F5F5', paper: '#FFFFFF' },

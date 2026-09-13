@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import NavBar from './components/NavBar.jsx';
 import Hero from './components/Hero.jsx';
+import ProductPreview from './components/ProductPreview.jsx';
 import Features from './components/Features.jsx';
 import InstallSteps from './components/InstallSteps.jsx';
 import Changelog from './components/Changelog.jsx';
@@ -41,6 +42,7 @@ export default function App() {
     <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
       <NavBar version={version?.version} downloadUrl={downloadUrl} />
       <Hero version={version?.version} downloadUrl={downloadUrl} />
+      <ProductPreview />
       <Features />
       <InstallSteps />
       <Changelog version={version} items={changelog} />

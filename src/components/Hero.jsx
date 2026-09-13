@@ -125,7 +125,7 @@ export default function Hero({ version, downloadUrl }) {
               flex: '0 0 auto',
               width: { xs: 160, sm: 200 },
               height: { xs: 160, sm: 200 },
-              // 首屏主视觉的刻意例外：方块圆角保留原版的 32px，不随全站 6px 收敛
+              // 首屏主视觉的刻意例外：方块圆角保留 32px，不随全站 6px 收敛
               borderRadius: '32px',
               background: 'rgba(255,255,255,0.14)',
               border: '1px solid rgba(255,255,255,0.3)',

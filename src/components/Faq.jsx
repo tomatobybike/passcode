@@ -15,7 +15,7 @@ export default function Faq() {
   const { t } = useI18n();
 
   return (
-    <Box sx={{ py: { xs: 6, md: 9 }, background: 'background.paper' }}>
+    <Box sx={{ py: { xs: 6, md: 9 }, bgcolor: 'background.default' }}>
       <Container maxWidth="md">
         <Typography variant="h2" align="center" sx={{ mb: { xs: 3, md: 4 } }}>
           {t('faq.title')}
@@ -27,8 +27,12 @@ export default function Faq() {
               elevation={0}
               disableGutters
               sx={{
-                border: '1px solid',
-                borderColor: 'divider',
+                // 与「为什么选它」一致：去掉线框与底色，条目直接融进区块的浅灰底。
+                // Accordion 继承自 Paper，深色模式下 Paper 自带一层叠加渐变，只写 bgcolor 会残留淡色，故一并关掉。
+                bgcolor: 'transparent',
+                backgroundImage: 'none',
+                border: 0,
+                boxShadow: 'none',
                 borderRadius: `${radius.card}px`,
                 mb: 1.5,
                 overflow: 'hidden',
@@ -38,7 +42,13 @@ export default function Faq() {
             >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
-                sx={{ px: { xs: 1.75, md: 2.25 }, py: 0.5 }}
+                sx={{
+                  px: { xs: 1.75, md: 2.25 },
+                  py: 0.5,
+                  borderRadius: `${radius.card}px`,
+                  // 无底色后靠这层极浅 hover 底提示可点（MUI 已内置 background-color 过渡）
+                  '&:hover': { bgcolor: 'action.hover' },
+                }}
               >
                 <Typography variant="subtitle1" component="h3" sx={{ fontWeight: 600 }}>
                   {t(`faq.q${key}`)}

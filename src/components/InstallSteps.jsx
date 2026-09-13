@@ -63,7 +63,7 @@ export default function InstallSteps() {
   const { t } = useI18n();
 
   return (
-    <Box sx={{ py: { xs: 6, md: 9 }, background: 'background.paper' }}>
+    <Box sx={{ py: { xs: 6, md: 9 }, bgcolor: 'background.default' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" align="center" sx={{ mb: 1 }}>
           {t('install.title')}

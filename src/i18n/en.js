@@ -23,6 +23,40 @@ export const en = {
     'A locally encrypted Chrome password and URL manager. Your data lives on this computer only — no sync, no upload, no server.',
   'hero.download': 'Download latest',
   'hero.aes': 'AES-GCM-256 encryption',
+  /* ---------------------- Feature module: one-click fill --------------------- */
+  'preview.title': 'One-click auto-fill',
+  'preview.subtitle':
+    'Open a login page and the popup matches accounts by domain — no digging through a password book, no recalling URLs.',
+  'preview.point1': 'Accounts matched automatically by domain — no manual search',
+  'preview.point2': 'One click fills the form, works with React / Vue controlled inputs',
+  'preview.point3': 'Clipboard auto-clears 30 seconds after copying a password',
+
+  /* ------------------------ Product mock (decorative) ------------------------ */
+  'mock.search': 'Search accounts',
+  'mock.matched': '{n} accounts matched',
+
+  /* ------------------------- Note sample (markdown render) ------------------------- */
+  'mock.note.heading': 'Quiet Night Thought',
+  'mock.note.byline': 'Li Bai · Tang dynasty',
+  'mock.note.body':
+    'Moonlight before my bed,\nlike frost upon the ground.\nI raise my head to the bright moon,\nI lower it, thinking of home.',
+
+  /* ---------------------- Feature module: entry types ---------------------- */
+  'types.overline': 'ENTRY TYPES',
+  'types.title': 'One vault, four kinds of entries',
+  'types.subtitle':
+    'Beyond logins it stores links, commands, clients and notes — each with its own view.',
+  'types.link.title': 'Link',
+  'types.link.desc': 'A single URL — open or copy it when you need it.',
+  'types.command.title': 'Command',
+  'types.command.desc': 'Frequently used shell snippets, ready to paste into a terminal.',
+  'types.client.title': 'Client',
+  'types.client.desc': 'Address, port and credentials in one place.',
+  'types.note.title': 'Note',
+  'types.note.desc': 'A block of free text for everything else.',
+  'types.prev': 'Previous',
+  'types.next': 'Next',
+  'types.dot': 'Slide {n} of 4',
 
   /* -------------------------------- Features -------------------------------- */
   'features.title': 'Why Passcode Vault',

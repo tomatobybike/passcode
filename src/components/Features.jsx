@@ -16,7 +16,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import BackupIcon from '@mui/icons-material/Backup';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { brand, enterSx, radius, surfaceCard } from '../theme.js';
+import { brand, enterSx, ghostCard, radius } from '../theme.js';
 import { useI18n } from '../i18n/I18nProvider.jsx';
 
 // 图标与文案解耦：新增一项只需改这里 + i18n/zh.js 与 i18n/en.js 各补两条
@@ -74,7 +74,7 @@ export default function Features() {
   const { t } = useI18n();
 
   return (
-    <Box sx={{ py: { xs: 6, md: 9 }, background: 'background.default' }}>
+    <Box sx={{ py: { xs: 6, md: 9 }, bgcolor: 'background.paper' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" align="center" sx={{ mb: 1 }}>
           {t('features.title')}
@@ -85,7 +85,7 @@ export default function Features() {
         <Grid container spacing={{ xs: 2, md: 3 }}>
           {FEATURES.map((f, i) => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={f.key}>
-              <Card elevation={0} sx={(theme) => ({ ...surfaceCard(theme), ...enterSx(delayOf(i)) })}>
+              <Card elevation={0} sx={(theme) => ({ ...ghostCard(theme), ...enterSx(delayOf(i)) })}>
                 <CardContent sx={{ p: { xs: 2.5, md: 3 }, '&:last-child': { pb: { xs: 2.5, md: 3 } } }}>
                   <IconBadge>{f.icon}</IconBadge>
                   <Typography variant="h3" sx={{ mb: 1 }}>
@@ -101,7 +101,7 @@ export default function Features() {
 
           {/* 末行右侧的宽面板：桌面下与第 10 张卡正好填满一行，不留空位 */}
           <Grid size={{ xs: 12, md: 8 }}>
-            <Card elevation={0} sx={(theme) => ({ ...surfaceCard(theme), ...enterSx(0.1) })}>
+            <Card elevation={0} sx={(theme) => ({ ...ghostCard(theme), ...enterSx(0.1) })}>
               <CardContent sx={{ p: { xs: 2.5, md: 3 }, '&:last-child': { pb: { xs: 2.5, md: 3 } } }}>
                 <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1 }}>
                   <CheckCircleIcon sx={{ color: 'primary.main' }} />
