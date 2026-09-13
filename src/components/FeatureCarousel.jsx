@@ -1,215 +1,95 @@
-import { useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import Tooltip from '@mui/material/Tooltip';
 import LanguageIcon from '@mui/icons-material/Language';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import DevicesIcon from '@mui/icons-material/Devices';
 import StickyNote2OutlinedIcon from '@mui/icons-material/StickyNote2Outlined';
+import KeyIcon from '@mui/icons-material/Key';
 import TypeMock from './TypeMock.jsx';
+import {
+  Carousel,
+  CarouselThumbs,
+  CarouselArrowFloatButtons,
+  useCarousel,
+} from './carousel/index.js';
 import { useI18n } from '../i18n/I18nProvider.jsx';
 
-const TYPES = ['link', 'command', 'client', 'note'];
+// 账号排第 1 位：产品本身就是「账号、链接、客户端、命令、便签」五类
+const TYPES = ['account', 'link', 'command', 'client', 'note'];
 
-/** 缩略条图标：四个类型的图形区分度最高 */
+/** 缩略条图标：五个类型的图形区分度最高 */
 const TYPE_ICONS = {
+  account: KeyIcon,
   link: LanguageIcon,
   command: TerminalIcon,
   client: DevicesIcon,
   note: StickyNote2OutlinedIcon,
 };
 
-/** 卡片宽度上限：容器比它宽时用左右内边距把卡片顶到中间，首尾卡才能居中 */
+/** 卡片宽度上限：与参考站的幻灯片一屏一张对应 */
 const CARD_MAX = 520;
 /** 箭头距卡片边缘的间距：按钮宽 40 + 间隙 8 */
 const ARROW_OFFSET = 48;
-const ANIM_MS = 520;
-const SETTLE_MS = 160;
-
-/* 缩略条：定宽格子（放大时不挤压邻居，也就没有布局跳动）+ 参考站实测的 0.3s 标准缓动 */
-const THUMB_W = { xs: 76, sm: 92 };
-const THUMB_MS = 300;
-const THUMB_EASE = 'cubic-bezier(0.4, 0, 0.2, 1)';
-const THUMB_IDLE_SCALE = 0.86;
+/** 缩略格子与格内徽标：选中时徽标从半尺寸放大到占满格子 */
+const THUMB_CELL = { xs: 64, sm: 96 };
+const THUMB_DOT = { xs: 32, sm: 48 };
 const THUMB_IDLE_OPACITY = 0.48;
 
-const prefersReducedMotion = () =>
-  typeof window !== 'undefined' &&
-  typeof window.matchMedia === 'function' &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-const easeInOutCubic = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
-
-// 只有箭头图形，不要任何按钮外观（无底色/描边/投影）
-const arrowSx = {
-  position: 'absolute',
-  top: '50%',
-  transform: 'translateY(-50%)',
-  zIndex: 2,
-  // 窄屏箭头会叠在卡片上，缩小一档以免压到卡内文字（无背景后没有遮挡缓冲）
-  width: { xs: 32, sm: 40 },
-  height: { xs: 32, sm: 40 },
-  bgcolor: 'transparent',
-  border: 0,
-  boxShadow: 'none',
-  color: 'text.secondary',
-  // MUI IconButton 的悬停底色由 CSS 变量提供，必须一并覆盖，否则 hover 时会浮出圆底
-  '--IconButton-hoverBg': 'transparent',
-  '&:hover': { bgcolor: 'transparent', color: 'text.primary', boxShadow: 'none' },
-  '&.Mui-disabled': { bgcolor: 'transparent', color: 'text.disabled', boxShadow: 'none' },
-};
+/*
+ * 缩略轨共三份槽位。参考站有 8 张缩略图（864px）才有足够行程让 embla 把当前项居中；
+ * 我们只有 5 类（5×108 = 540px，仅比 480px 视口宽 60px），不补行程时活动项会偏离中心近 190px。
+ * 第一份（序号 0~4）参与点击与读屏 —— 因为 embla 的 `scrollTo(i)` 正是居中第 i 个槽位，
+ * 后两份只是把行程撑够、保证每个序号都能被送到视口正中。
+ */
+const THUMB_SLOTS = Array.from({ length: TYPES.length * 3 }, (_, i) => i);
 
 /**
- * 条目类型轮播：原生滚动 + 自绘动效，不引入任何轮播依赖。
- * - 箭头位于卡片两侧（滚动容器之外，否则会被 overflow 裁掉），底部只留圆点；
- * - 切换用 rAF + easeInOutCubic 缓动（浏览器原生 smooth 时间与曲线不可控，且强制吸附会与程序滚动打架，所以不用 scroll-snap）；
- * - 用户自由滑动停止后做一次「静默吸附」，保留磁性手感；
- * - 非当前卡淡出并轻微缩小，形成焦点交接，避免硬切。
+ * 条目类型轮播：直接移植参考站 `_elearning/elearning-testimonial.jsx` 的写法 ——
+ * `useCarousel` 建主实例 + 缩略实例，`Carousel` / `CarouselThumbs` 只负责 embla 要求的三层 DOM，
+ * 位移全部由 embla 逐帧写入 translate3d（因此没有 CSS transition，也就没有 reduce-motion 分支）。
+ *
+ * 与参考的两处有意偏差：
+ * 1. 浮动箭头位置：参考贴容器边缘（会压在内容上），我们的幻灯片是白底窗口卡片，故放在卡片外侧；
+ * 2. 不抄 `startIndex: 1`（那只是参考用来演示循环），我们从「账号」开始。
  */
 export default function FeatureCarousel() {
   const { t } = useI18n();
-  const scrollerRef = useRef(null);
-  const rafRef = useRef(0);
-  const settleRef = useRef(0);
-  const animatingRef = useRef(false);
-  const [index, setIndex] = useState(0);
 
-  /** 每张卡居中时对应的 scrollLeft（视口即一张卡宽，首尾都能精确居中，无需夹取兜底） */
-  const getSnapPositions = () => {
-    const el = scrollerRef.current;
-    if (!el || !el.children.length) return [];
-    // 容器自身居中后，子节点的 offsetLeft 是「相对定位包裹层」的值，必须减掉视口原点
-    const origin = el.offsetLeft;
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    return [...el.children].map((kid) => {
-      const centered = kid.offsetLeft - origin - (el.clientWidth - kid.offsetWidth) / 2;
-      return Math.max(0, Math.min(maxScroll, centered));
-    });
-  };
-
-  /** 逐帧缓动滚动；开始前必须取消旧动画，否则连点箭头会互相抢 scrollLeft */
-  const animateTo = (target) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    cancelAnimationFrame(rafRef.current);
-    if (prefersReducedMotion()) {
-      el.scrollLeft = target;
-      animatingRef.current = false;
-      return;
-    }
-    const start = el.scrollLeft;
-    const distance = target - start;
-    if (!distance) {
-      animatingRef.current = false;
-      return;
-    }
-    const startedAt = performance.now();
-    animatingRef.current = true;
-    const step = (now) => {
-      const progress = Math.min(1, (now - startedAt) / ANIM_MS);
-      el.scrollLeft = start + distance * easeInOutCubic(progress);
-      if (progress < 1) {
-        rafRef.current = requestAnimationFrame(step);
-      } else {
-        animatingRef.current = false;
-      }
-    };
-    rafRef.current = requestAnimationFrame(step);
-  };
-
-  const scrollToIndex = (next) => {
-    const snaps = getSnapPositions();
-    if (!snaps.length) return;
-    const clamped = Math.max(0, Math.min(TYPES.length - 1, next));
-    animateTo(snaps[clamped]);
-    setIndex(clamped);
-  };
-
-  const handleScroll = () => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const snaps = getSnapPositions();
-    if (!snaps.length) return;
-    let nearest = 0;
-    let nearestDistance = Infinity;
-    snaps.forEach((left, i) => {
-      const distance = Math.abs(left - el.scrollLeft);
-      if (distance < nearestDistance) {
-        nearestDistance = distance;
-        nearest = i;
-      }
-    });
-    setIndex(nearest);
-
-    // 程序动画期间不介入；用户自由滑动停止后，平滑吸附到最近一张
-    if (animatingRef.current) return;
-    clearTimeout(settleRef.current);
-    settleRef.current = setTimeout(() => {
-      const current = getSnapPositions();
-      if (!current.length) return;
-      let target = 0;
-      let best = Infinity;
-      current.forEach((left) => {
-        const distance = Math.abs(left - el.scrollLeft);
-        if (distance < best) {
-          best = distance;
-          target = left;
-        }
-      });
-      if (best > 1) animateTo(target);
-    }, SETTLE_MS);
-  };
-
-  // 卸载时清掉 rAF 与静默吸附定时器，避免在已卸载组件上更新状态
-  useEffect(
-    () => () => {
-      cancelAnimationFrame(rafRef.current);
-      clearTimeout(settleRef.current);
-    },
-    [],
-  );
+  const carousel = useCarousel({
+    loop: true,
+    thumbs: { loop: true, slidesToShow: 'auto' },
+  });
 
   const sideOffset = `max(4px, calc((100% - ${CARD_MAX}px) / 2 - ${ARROW_OFFSET}px))`;
 
   return (
-    // 段② 外层是居中的标题排版，卡片内部需要回到左对齐（markdown 便签、命令块等）
     <Box sx={{ textAlign: 'left' }}>
       <Box sx={{ position: 'relative' }}>
-        {/* 箭头必须是滚动容器的同级兄弟：放进去会被 overflow: auto 裁掉 */}
-        <IconButton
-          onClick={() => scrollToIndex(index - 1)}
-          disabled={index === 0}
-          aria-label={t('types.prev')}
-          sx={{ ...arrowSx, left: sideOffset }}
-        >
-          <ChevronLeftIcon sx={{ fontSize: { xs: 22, sm: 28 } }} />
-        </IconButton>
+        <CarouselArrowFloatButtons
+          {...carousel.arrows}
+          options={carousel.options}
+          slotProps={{ prevBtn: { sx: { left: sideOffset } }, nextBtn: { sx: { right: sideOffset } } }}
+          sx={{
+            borderRadius: '50%',
+            color: 'text.primary',
+            bgcolor: 'transparent',
+            display: { xs: 'none', md: 'flex' },
+          }}
+        />
 
-        <Box
-          ref={scrollerRef}
-          onScroll={handleScroll}
+        <Carousel
+          carousel={carousel}
           role="region"
           aria-roledescription="carousel"
           aria-label={t('types.title')}
+          // li 默认是 block：改成伸缩列，幻灯片内容才能拿到确定高度、5 张卡等高
+          slotProps={{ slide: { display: 'flex', flexDirection: 'column' } }}
           sx={{
-            // 视口 = 一张卡宽度并居中：静止时只显示当前卡，邻卡被容器裁掉
-            width: '100%',
             maxWidth: CARD_MAX,
-            mx: 'auto',
-            display: 'flex',
-            gap: 2,
-            overflowX: 'auto',
-            // 竖向留白给 hover 上浮与投影，同时避免出现纵向滚动条
-            overflowY: 'hidden',
+            // 竖向留白给卡片投影，否则会被 root 的 overflow: hidden 裁掉
             py: 3,
-            // 不用 scroll-snap：强制吸附会与 rAF 动效抢控制权，产生骤停/二次吸附
-            scrollSnapType: 'none',
-            WebkitOverflowScrolling: 'touch',
-            scrollbarWidth: 'none',
-            '&::-webkit-scrollbar': { display: 'none' },
+            cursor: 'grab',
+            '&:active': { cursor: 'grabbing' },
           }}
         >
           {TYPES.map((type, i) => (
@@ -217,59 +97,42 @@ export default function FeatureCarousel() {
               key={type}
               role="group"
               aria-roledescription="slide"
-              aria-label={t('types.dot', { n: i + 1 })}
-              sx={{
-                flex: '0 0 100%',
-                minWidth: 0,
-                // 焦点交接：当前卡满尺寸，其余卡淡出并轻微缩小
-                opacity: i === index ? 1 : 0.55,
-                transform: i === index ? 'scale(1)' : 'scale(0.94)',
-                transition: 'opacity .45s ease, transform .45s ease',
-                '@media (prefers-reduced-motion: reduce)': {
-                  opacity: 1,
-                  transform: 'none',
-                  transition: 'none',
-                },
-              }}
+              aria-label={t('types.dot', { n: i + 1, total: TYPES.length })}
+              // flex: 1 拿到 li 的确定高度，再交给 TypeMock 撑满
+              sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}
             >
               <TypeMock type={type} />
             </Box>
           ))}
-        </Box>
-
-        <IconButton
-          onClick={() => scrollToIndex(index + 1)}
-          disabled={index === TYPES.length - 1}
-          aria-label={t('types.next')}
-          sx={{ ...arrowSx, right: sideOffset }}
-        >
-          <ChevronRightIcon sx={{ fontSize: { xs: 22, sm: 28 } }} />
-        </IconButton>
+        </Carousel>
       </Box>
 
-      {/* 底部控制区：类型缩略条 —— 活动项放大高亮，其余缩小变淡（定宽格子，无布局跳动） */}
-      <Stack
-        direction="row"
-        justifyContent="center"
-        alignItems="center"
-        flexWrap="wrap"
-        useFlexGap
-        spacing={1}
+      <CarouselThumbs
+        ref={carousel.thumbs.thumbsRef}
+        options={carousel.options?.thumbs}
+        slotProps={{ disableMask: true }}
+        sx={{ width: { xs: 1, sm: 480 }, mx: 'auto' }}
       >
-        {TYPES.map((type, i) => {
+        {THUMB_SLOTS.map((slot) => {
+          const typeIndex = slot % TYPES.length;
+          const type = TYPES[typeIndex];
           const Icon = TYPE_ICONS[type];
-          const active = i === index;
-          return (
+          const active = typeIndex === carousel.thumbs.selectedIndex;
+          // 后两份副本只负责撑行程，不参与读屏，避免同一类型被重复朗读
+          const isReal = slot < TYPES.length;
+
+          const thumb = (
             <Box
-              key={type}
               component="button"
               type="button"
-              onClick={() => scrollToIndex(i)}
+              onClick={() => carousel.thumbs.onClickThumb(typeIndex)}
               aria-label={t(`types.${type}.title`)}
-              aria-current={active}
+              aria-current={isReal ? active : undefined}
+              aria-hidden={isReal ? undefined : true}
+              tabIndex={isReal ? undefined : -1}
               sx={{
-                width: THUMB_W,
-                minHeight: 44,
+                width: THUMB_CELL,
+                height: THUMB_CELL,
                 p: 0,
                 border: 0,
                 bgcolor: 'transparent',
@@ -279,31 +142,41 @@ export default function FeatureCarousel() {
                 justifyContent: 'center',
               }}
             >
-              <Stack
-                direction="row"
-                spacing={0.75}
-                alignItems="center"
+              <Box
                 sx={{
-                  color: active ? 'primary.main' : 'text.secondary',
-                  fontWeight: active ? 700 : 600,
+                  width: active ? '100%' : THUMB_DOT,
+                  height: active ? '100%' : THUMB_DOT,
                   opacity: active ? 1 : THUMB_IDLE_OPACITY,
-                  transform: active ? 'scale(1)' : `scale(${THUMB_IDLE_SCALE})`,
-                  transition: `opacity ${THUMB_MS}ms ${THUMB_EASE}, transform ${THUMB_MS}ms ${THUMB_EASE}, color ${THUMB_MS}ms ${THUMB_EASE}`,
-                  '@media (prefers-reduced-motion: reduce)': {
-                    transition: 'none',
-                    transform: 'none',
-                  },
+                  borderRadius: '50%',
+                  // 中性圆底：区块本身就是 #F5F5F5 灰底，action.hover 会几乎看不见，
+                  // 故用背景纸白；选中与未选中同一个底，只靠图标色与不透明度区分。
+                  bgcolor: 'background.paper',
+                  color: active ? 'text.primary' : 'text.secondary',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: (theme) =>
+                    theme.transitions.create(['width', 'height', 'opacity', 'background-color']),
                 }}
               >
-                <Icon sx={{ fontSize: 18, flexShrink: 0 }} />
-                <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 'inherit', whiteSpace: 'nowrap' }}>
-                  {t(`types.${type}.title`)}
-                </Typography>
-              </Stack>
+                <Icon
+                  sx={{
+                    fontSize: 20,
+                    transform: active ? 'scale(2)' : 'scale(1)',
+                    transition: (theme) => theme.transitions.create(['transform']),
+                  }}
+                />
+              </Box>
+            </Box>
+          );
+
+          return (
+            <Box key={slot}>
+              {isReal ? <Tooltip title={t(`types.${type}.title`)}>{thumb}</Tooltip> : thumb}
             </Box>
           );
         })}
-      </Stack>
+      </CarouselThumbs>
     </Box>
   );
 }

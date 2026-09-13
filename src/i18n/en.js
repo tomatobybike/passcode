@@ -43,9 +43,10 @@ export const en = {
 
   /* ---------------------- Feature module: entry types ---------------------- */
   'types.overline': 'ENTRY TYPES',
-  'types.title': 'One vault, four kinds of entries',
-  'types.subtitle':
-    'Beyond logins it stores links, commands, clients and notes — each with its own view.',
+  'types.title': 'One vault, five kinds of entries',
+  'types.subtitle': 'Logins, links, commands, clients and notes — each with its own view.',
+  'types.account.title': 'Account',
+  'types.account.desc': 'Accounts matched by domain, filled into the login form in one click.',
   'types.link.title': 'Link',
   'types.link.desc': 'A single URL — open or copy it when you need it.',
   'types.command.title': 'Command',
@@ -56,7 +57,7 @@ export const en = {
   'types.note.desc': 'A block of free text for everything else.',
   'types.prev': 'Previous',
   'types.next': 'Next',
-  'types.dot': 'Slide {n} of 4',
+  'types.dot': 'Slide {n} of {total}',
 
   /* -------------------------------- Features -------------------------------- */
   'features.title': 'Why Passcode Vault',

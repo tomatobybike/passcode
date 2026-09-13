@@ -41,8 +41,10 @@ export const zh = {
 
   /* ---------------------------- 功能模块：条目类型 ---------------------------- */
   'types.overline': '条目类型',
-  'types.title': '一个密码箱，装得下四种内容',
-  'types.subtitle': '除账号外，还能存链接、命令、客户端与便签——每种都有对应的展示方式。',
+  'types.title': '一个密码箱，装得下五种内容',
+  'types.subtitle': '账号、链接、命令、客户端与便签——每种都有对应的展示方式。',
+  'types.account.title': '账号',
+  'types.account.desc': '域名自动匹配账号，点一下即填入登录表单。',
   'types.link.title': '链接',
   'types.link.desc': '一行网址，需要时直接打开或复制。',
   'types.command.title': '命令',
@@ -53,7 +55,7 @@ export const zh = {
   'types.note.desc': '一段纯文本，放那些归不了类的信息。',
   'types.prev': '上一张',
   'types.next': '下一张',
-  'types.dot': '第 {n} 张，共 4 张',
+  'types.dot': '第 {n} 张，共 {total} 张',
 
   /* --------------------------------- 功能介绍 -------------------------------- */
   'features.title': '为什么选它',
