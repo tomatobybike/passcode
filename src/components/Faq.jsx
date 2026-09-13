@@ -26,7 +26,7 @@ export default function Faq() {
             sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, mb: 1.5, '&:before': { display: 'none' } }}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+              <Typography variant="subtitle1" component="h3" sx={{ fontWeight: 600 }}>
                 {t(`faq.q${key}`)}
               </Typography>
             </AccordionSummary>

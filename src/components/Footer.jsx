@@ -14,11 +14,11 @@ export default function Footer() {
   const { t } = useI18n();
 
   return (
-    <Box sx={{ py: 6, background: '#0F172A', color: 'rgba(255,255,255,0.8)' }}>
+    <Box component="footer" sx={{ py: 6, background: '#0F172A', color: 'rgba(255,255,255,0.8)' }}>
       <Container maxWidth="lg">
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between" alignItems="center">
           <Box>
-            <Typography variant="h6" sx={{ color: '#fff', fontWeight: 700 }}>
+            <Typography variant="h6" component="div" sx={{ color: '#fff', fontWeight: 700 }}>
               {t('footer.brand')}
             </Typography>
             <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', mt: 0.5 }}>
@@ -34,7 +34,7 @@ export default function Footer() {
             </Link>
           </Stack>
         </Stack>
-        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.45)', display: 'block', mt: 3 }}>
+        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.55)', display: 'block', mt: 3 }}>
           {t('footer.license')}
         </Typography>
       </Container>

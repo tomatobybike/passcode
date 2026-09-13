@@ -48,6 +48,7 @@ export default function NavBar({ version, downloadUrl }) {
         />
         <Typography
           variant="h6"
+          component="div"
           noWrap
           sx={{ fontWeight: 700, fontSize: { xs: '0.95rem', sm: '1.25rem' }, minWidth: 0 }}
         >

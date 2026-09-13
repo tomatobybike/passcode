@@ -45,6 +45,7 @@ export default function Hero({ version, downloadUrl }) {
             </Typography>
             <Typography
               variant="h6"
+              component="p"
               sx={{ fontWeight: 400, color: 'rgba(255,255,255,0.92)', maxWidth: 520, fontSize: { xs: '0.95rem', sm: '1.05rem' } }}
             >
               {t('hero.subtitle')}
