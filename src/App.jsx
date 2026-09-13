@@ -38,7 +38,7 @@ export default function App() {
   const downloadUrl = `${base}download/passcode.zip`;
 
   return (
-    <Box>
+    <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
       <NavBar version={version?.version} downloadUrl={downloadUrl} />
       <Hero version={version?.version} downloadUrl={downloadUrl} />
       <Features />

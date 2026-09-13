@@ -5,9 +5,31 @@
     <link rel="icon" type="image/png" href="/passcode/favicon.png" />
     <link rel="apple-touch-icon" href="/passcode/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0EA5A4" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#16B364" />
     <meta name="description" content="Passcode 密码箱 —— 本地加密的 Chrome 密码与网址管理器，全程离线、不联网、不上传。" />
     <title>Passcode 密码箱 · 本地加密的 Chrome 密码管理器</title>
+
+    <!-- 首帧兜底：在 React 挂载前先定好明暗主题，避免深色用户看到闪白（键名与 src/colorMode.jsx 保持一致） -->
+    <script>
+      (function () {
+        try {
+          var saved = window.localStorage.getItem('passcode-site-theme');
+          var mode =
+            saved === 'light' || saved === 'dark'
+              ? saved
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.dataset.theme = mode;
+          if (mode === 'dark') {
+            document.documentElement.style.backgroundColor = '#111111';
+          }
+        } catch (e) {
+          /* 忽略：由 React 侧兜底 */
+        }
+      })();
+    </script>
 
     <!-- 社交分享卡片：爬虫不执行 JS，这里写死中文口径（页面内切换语言不影响） -->
     <link rel="canonical" href="https://passcode.hisread.com/passcode/" />

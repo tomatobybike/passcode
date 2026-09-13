@@ -7,39 +7,56 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Link from '@mui/material/Link';
-import SvgIcon from '@mui/material/SvgIcon';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import DownloadIcon from '@mui/icons-material/Download';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
 import logo from '../assets/logo-128.png';
 import { useI18n } from '../i18n/I18nProvider.jsx';
+import { useColorMode } from '../colorMode.jsx';
 
 const GITHUB = 'https://github.com/tomatobybike/passcode';
 
-function GitHubMark(props) {
-  return (
-    <SvgIcon viewBox="0 0 24 24" {...props}>
-      <path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z" />
-    </SvgIcon>
-  );
-}
+// 移动端也要够大的点击区域（40px），桌面端收敛到 34px
+const iconButtonSx = {
+  width: { xs: 40, sm: 34 },
+  height: { xs: 40, sm: 34 },
+  borderRadius: '4px',
+  color: 'text.secondary',
+  '&:hover': { color: 'primary.main', bgcolor: 'action.hover' },
+};
 
 export default function NavBar({ version, downloadUrl }) {
   const { t, lang, setLang } = useI18n();
+  const { mode, toggleMode } = useColorMode();
+  const isDark = mode === 'dark';
 
   return (
     <AppBar
       position="fixed"
       elevation={0}
       sx={{
-        background: 'rgba(255,255,255,0.82)',
+        background: isDark ? 'rgba(17,17,17,0.82)' : 'rgba(255,255,255,0.82)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid',
         borderColor: 'divider',
         color: 'text.primary',
       }}
     >
-      <Toolbar sx={{ maxWidth: 1200, width: '100%', mx: 'auto', px: { xs: 1.5, sm: 3 }, gap: { xs: 0.5, sm: 1 } }}>
+      <Toolbar
+        disableGutters
+        sx={{
+          maxWidth: 1200,
+          width: '100%',
+          mx: 'auto',
+          minHeight: { xs: 56, sm: 64 },
+          px: { xs: 1.25, sm: 3 },
+          gap: { xs: 0.5, sm: 1 },
+          flexWrap: 'nowrap',
+        }}
+      >
         <Box
           component="img"
           src={logo}
@@ -50,7 +67,13 @@ export default function NavBar({ version, downloadUrl }) {
           variant="h6"
           component="div"
           noWrap
-          sx={{ fontWeight: 700, fontSize: { xs: '0.95rem', sm: '1.25rem' }, minWidth: 0 }}
+          sx={{
+            fontWeight: 700,
+            fontSize: { xs: '0.95rem', sm: '1.25rem' },
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
         >
           {t('nav.brand')}
         </Typography>
@@ -60,7 +83,7 @@ export default function NavBar({ version, downloadUrl }) {
             label={`v${version}`}
             color="primary"
             variant="outlined"
-            sx={{ ml: 1.5, display: { xs: 'none', sm: 'inline-flex' } }}
+            sx={{ ml: 1, display: { xs: 'none', sm: 'inline-flex' }, flexShrink: 0 }}
           />
         )}
         <Box sx={{ flexGrow: 1 }} />
@@ -74,6 +97,7 @@ export default function NavBar({ version, downloadUrl }) {
           aria-label={t('nav.langSwitch')}
           sx={{
             display: { xs: 'none', sm: 'inline-flex' },
+            flexShrink: 0,
             '& .MuiToggleButton-root': {
               px: 1.25,
               py: 0.25,
@@ -97,7 +121,9 @@ export default function NavBar({ version, downloadUrl }) {
           aria-label={t('nav.langSwitch')}
           sx={{
             display: { xs: 'inline-flex', sm: 'none' },
-            minWidth: 0,
+            flexShrink: 0,
+            minWidth: 40,
+            height: 40,
             px: 1,
             fontSize: 12,
             lineHeight: 1.7,
@@ -107,23 +133,43 @@ export default function NavBar({ version, downloadUrl }) {
           {lang === 'zh' ? 'EN' : '中'}
         </Button>
 
+        {/* 明暗主题切换 */}
+        <Tooltip title={isDark ? t('nav.themeToLight') : t('nav.themeToDark')}>
+          <IconButton
+            onClick={toggleMode}
+            aria-label={isDark ? t('nav.themeToLight') : t('nav.themeToDark')}
+            sx={{ ...iconButtonSx, flexShrink: 0 }}
+          >
+            {isDark ? <LightModeIcon fontSize="small" /> : <DarkModeIcon fontSize="small" />}
+          </IconButton>
+        </Tooltip>
+
         <Tooltip title={t('nav.github')}>
           <IconButton
             component={Link}
             href={GITHUB}
             target="_blank"
             rel="noreferrer"
-            size="small"
-            sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
+            aria-label={t('nav.github')}
+            sx={{ ...iconButtonSx, display: { xs: 'none', sm: 'inline-flex' }, flexShrink: 0 }}
           >
-            <GitHubMark />
+            <GitHubIcon fontSize="small" />
           </IconButton>
         </Tooltip>
+
         <Button
           variant="contained"
+          size="small"
           startIcon={<DownloadIcon />}
           href={downloadUrl}
-          sx={{ ml: 1, borderRadius: 999, px: { xs: 1.75, sm: 2.5 }, minWidth: 0, whiteSpace: 'nowrap' }}
+          sx={{
+            ml: { xs: 0.5, sm: 1 },
+            px: { xs: 1.5, sm: 2.5 },
+            height: 40,
+            minWidth: 0,
+            flexShrink: 0,
+            whiteSpace: 'nowrap',
+          }}
         >
           <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
             {t('nav.downloadFull')}

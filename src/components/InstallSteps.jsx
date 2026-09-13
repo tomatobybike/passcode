@@ -7,6 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { enterSx, radius, surfaceCard } from '../theme.js';
 import { useI18n } from '../i18n/I18nProvider.jsx';
 
 // 文案 key 而非文案本身：翻译在组件内按当前语言取
@@ -15,10 +16,10 @@ const COLUMNS = [
   { titleKey: 'install.macTitle', stepKeys: ['install.mac1', 'install.mac2', 'install.mac3', 'install.mac4'] },
 ];
 
-function StepList({ title, steps }) {
+function StepList({ title, steps, delay }) {
   return (
-    <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 4, height: '100%' }}>
-      <CardContent>
+    <Card elevation={0} sx={(theme) => ({ ...surfaceCard(theme), ...enterSx(delay) })}>
+      <CardContent sx={{ p: { xs: 2.5, md: 3 }, '&:last-child': { pb: { xs: 2.5, md: 3 } } }}>
         <Typography variant="h3" sx={{ mb: 2 }}>
           {title}
         </Typography>
@@ -30,9 +31,9 @@ function StepList({ title, steps }) {
                   flexShrink: 0,
                   width: 24,
                   height: 24,
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg,#0EA5A4,#2563EB)',
-                  color: '#fff',
+                  borderRadius: `${radius.button}px`,
+                  bgcolor: 'primary.main',
+                  color: 'primary.contrastText',
                   fontSize: 13,
                   fontWeight: 700,
                   display: 'flex',
@@ -43,7 +44,11 @@ function StepList({ title, steps }) {
               >
                 {i + 1}
               </Box>
-              <Typography variant="body2" color="text.secondary" sx={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ lineHeight: 1.7, wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+              >
                 {s}
               </Typography>
             </Stack>
@@ -58,25 +63,37 @@ export default function InstallSteps() {
   const { t } = useI18n();
 
   return (
-    <Box sx={{ py: { xs: 6, md: 9 }, background: '#fff' }}>
+    <Box sx={{ py: { xs: 6, md: 9 }, background: 'background.paper' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" align="center" sx={{ mb: 1 }}>
           {t('install.title')}
         </Typography>
-        <Typography variant="body1" align="center" color="text.secondary" sx={{ mb: 4 }}>
+        <Typography variant="body1" align="center" color="text.secondary" sx={{ mb: { xs: 3, md: 4 } }}>
           {t('install.subtitle')}
         </Typography>
         <Alert
           severity="warning"
-          icon={<FiberManualRecordIcon />}
-          sx={{ maxWidth: 820, mx: 'auto', mb: 4, borderRadius: 3, overflowWrap: 'anywhere' }}
+          icon={<FiberManualRecordIcon fontSize="small" />}
+          sx={{
+            maxWidth: 820,
+            mx: 'auto',
+            mb: { xs: 3, md: 4 },
+            borderRadius: `${radius.card}px`,
+            overflowWrap: 'anywhere',
+            alignItems: 'flex-start',
+            '& .MuiAlert-icon': { mt: 0.25 },
+          }}
         >
           <strong>{t('install.warnStrong')}</strong> {t('install.warnRest')}
         </Alert>
-        <Grid container spacing={3}>
-          {COLUMNS.map((column) => (
+        <Grid container spacing={{ xs: 2, md: 3 }}>
+          {COLUMNS.map((column, i) => (
             <Grid size={{ xs: 12, md: 6 }} key={column.titleKey}>
-              <StepList title={t(column.titleKey)} steps={column.stepKeys.map((key) => t(key))} />
+              <StepList
+                title={t(column.titleKey)}
+                steps={column.stepKeys.map((key) => t(key))}
+                delay={i * 0.06}
+              />
             </Grid>
           ))}
         </Grid>

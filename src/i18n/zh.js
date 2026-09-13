@@ -12,6 +12,9 @@ export const zh = {
   'nav.downloadShort': '下载',
   'nav.github': 'GitHub 仓库',
   'nav.langSwitch': '切换语言',
+  'nav.themeSwitch': '切换主题',
+  'nav.themeToDark': '切换到深色模式',
+  'nav.themeToLight': '切换到浅色模式',
 
   /* ---------------------------------- 首屏 ---------------------------------- */
   'hero.badge': '本地加密 · 全程离线',

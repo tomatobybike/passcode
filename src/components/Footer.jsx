@@ -14,9 +14,22 @@ export default function Footer() {
   const { t } = useI18n();
 
   return (
-    <Box component="footer" sx={{ py: 6, background: '#0F172A', color: 'rgba(255,255,255,0.8)' }}>
+    <Box
+      component="footer"
+      sx={{
+        py: { xs: 5, md: 6 },
+        background: (theme) => (theme.palette.mode === 'dark' ? '#0B0B0B' : '#111111'),
+        color: 'rgba(255,255,255,0.8)',
+        borderTop: '1px solid rgba(255,255,255,0.08)',
+      }}
+    >
       <Container maxWidth="lg">
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between" alignItems="center">
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          spacing={2}
+          justifyContent="space-between"
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
+        >
           <Box>
             <Typography variant="h6" component="div" sx={{ color: '#fff', fontWeight: 700 }}>
               {t('footer.brand')}
@@ -25,11 +38,25 @@ export default function Footer() {
               {t('footer.tagline')}
             </Typography>
           </Box>
-          <Stack direction="row" spacing={3} divider={<Divider orientation="vertical" flexItem sx={{ borderColor: 'rgba(255,255,255,0.2)' }} />}>
-            <Link href={GITHUB} target="_blank" rel="noreferrer" sx={{ color: 'rgba(255,255,255,0.85)' }}>
+          <Stack
+            direction="row"
+            spacing={3}
+            divider={<Divider orientation="vertical" flexItem sx={{ borderColor: 'rgba(255,255,255,0.2)' }} />}
+          >
+            <Link
+              href={GITHUB}
+              target="_blank"
+              rel="noreferrer"
+              sx={{ color: 'rgba(255,255,255,0.85)', '&:hover': { color: '#fff' } }}
+            >
               {t('footer.github')}
             </Link>
-            <Link href={MIRROR} target="_blank" rel="noreferrer" sx={{ color: 'rgba(255,255,255,0.85)' }}>
+            <Link
+              href={MIRROR}
+              target="_blank"
+              rel="noreferrer"
+              sx={{ color: 'rgba(255,255,255,0.85)', '&:hover': { color: '#fff' } }}
+            >
               {t('footer.mirror')}
             </Link>
           </Stack>

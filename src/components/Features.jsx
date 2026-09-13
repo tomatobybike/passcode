@@ -16,6 +16,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import BackupIcon from '@mui/icons-material/Backup';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { brand, enterSx, radius, surfaceCard } from '../theme.js';
 import { useI18n } from '../i18n/I18nProvider.jsx';
 
 // 图标与文案解耦：新增一项只需改这里 + i18n/zh.js 与 i18n/en.js 各补两条
@@ -50,14 +51,15 @@ function IconBadge({ children }) {
   return (
     <Stack
       sx={{
-        width: 52,
-        height: 52,
-        borderRadius: '14px',
-        background: 'linear-gradient(135deg,#0EA5A4,#2563EB)',
+        width: 48,
+        height: 48,
+        borderRadius: `${radius.card}px`,
+        background: `linear-gradient(135deg, ${brand.green} 0%, ${brand.greenDark} 100%)`,
         color: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
         mb: 2,
+        flexShrink: 0,
       }}
     >
       {children}
@@ -65,14 +67,8 @@ function IconBadge({ children }) {
   );
 }
 
-const cardSx = {
-  height: '100%',
-  border: '1px solid',
-  borderColor: 'divider',
-  borderRadius: 4,
-  transition: 'transform .2s, box-shadow .2s',
-  '&:hover': { transform: 'translateY(-6px)', boxShadow: '0 16px 40px rgba(15,23,42,0.12)' },
-};
+/** 依次出现的延迟：前几张错开，后面的统一封顶，避免长列表动画拖沓 */
+const delayOf = (index) => Math.min(index, 5) * 0.05;
 
 export default function Features() {
   const { t } = useI18n();
@@ -83,19 +79,19 @@ export default function Features() {
         <Typography variant="h2" align="center" sx={{ mb: 1 }}>
           {t('features.title')}
         </Typography>
-        <Typography variant="body1" align="center" color="text.secondary" sx={{ mb: 5 }}>
+        <Typography variant="body1" align="center" color="text.secondary" sx={{ mb: { xs: 4, md: 5 } }}>
           {t('features.subtitle')}
         </Typography>
-        <Grid container spacing={3}>
-          {FEATURES.map((f) => (
+        <Grid container spacing={{ xs: 2, md: 3 }}>
+          {FEATURES.map((f, i) => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={f.key}>
-              <Card elevation={0} sx={cardSx}>
-                <CardContent>
+              <Card elevation={0} sx={(theme) => ({ ...surfaceCard(theme), ...enterSx(delayOf(i)) })}>
+                <CardContent sx={{ p: { xs: 2.5, md: 3 }, '&:last-child': { pb: { xs: 2.5, md: 3 } } }}>
                   <IconBadge>{f.icon}</IconBadge>
                   <Typography variant="h3" sx={{ mb: 1 }}>
                     {t(`${f.key}.title`)}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
                     {t(`${f.key}.desc`)}
                   </Typography>
                 </CardContent>
@@ -105,8 +101,8 @@ export default function Features() {
 
           {/* 末行右侧的宽面板：桌面下与第 10 张卡正好填满一行，不留空位 */}
           <Grid size={{ xs: 12, md: 8 }}>
-            <Card elevation={0} sx={cardSx}>
-              <CardContent>
+            <Card elevation={0} sx={(theme) => ({ ...surfaceCard(theme), ...enterSx(0.1) })}>
+              <CardContent sx={{ p: { xs: 2.5, md: 3 }, '&:last-child': { pb: { xs: 2.5, md: 3 } } }}>
                 <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1 }}>
                   <CheckCircleIcon sx={{ color: 'primary.main' }} />
                   <Typography variant="h3">{t('features.extrasTitle')}</Typography>
@@ -137,7 +133,7 @@ export default function Features() {
                           mt: 1,
                         }}
                       />
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
                         {t(`features.extra.${key}`)}
                       </Typography>
                     </Stack>

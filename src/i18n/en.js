@@ -12,6 +12,9 @@ export const en = {
   'nav.downloadShort': 'Download',
   'nav.github': 'GitHub repository',
   'nav.langSwitch': 'Switch language',
+  'nav.themeSwitch': 'Switch theme',
+  'nav.themeToDark': 'Switch to dark mode',
+  'nav.themeToLight': 'Switch to light mode',
 
   /* ---------------------------------- Hero ---------------------------------- */
   'hero.badge': 'Locally encrypted · Fully offline',
