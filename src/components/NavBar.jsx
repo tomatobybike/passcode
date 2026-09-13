@@ -8,8 +8,11 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Link from '@mui/material/Link';
 import SvgIcon from '@mui/material/SvgIcon';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import DownloadIcon from '@mui/icons-material/Download';
 import logo from '../assets/logo-128.png';
+import { useI18n } from '../i18n/I18nProvider.jsx';
 
 const GITHUB = 'https://github.com/tomatobybike/passcode';
 
@@ -22,6 +25,8 @@ function GitHubMark(props) {
 }
 
 export default function NavBar({ version, downloadUrl }) {
+  const { t, lang, setLang } = useI18n();
+
   return (
     <AppBar
       position="fixed"
@@ -46,7 +51,7 @@ export default function NavBar({ version, downloadUrl }) {
           noWrap
           sx={{ fontWeight: 700, fontSize: { xs: '0.95rem', sm: '1.25rem' }, minWidth: 0 }}
         >
-          Passcode 密码箱
+          {t('nav.brand')}
         </Typography>
         {version && (
           <Chip
@@ -58,8 +63,58 @@ export default function NavBar({ version, downloadUrl }) {
           />
         )}
         <Box sx={{ flexGrow: 1 }} />
-        <Tooltip title="GitHub 仓库">
-          <IconButton component={Link} href={GITHUB} target="_blank" rel="noreferrer" size="small">
+
+        {/* 语言切换：宽屏为「中 / EN」分段控件，窄屏收敛成单个按钮（显示可切换到的另一种语言） */}
+        <ToggleButtonGroup
+          size="small"
+          exclusive
+          value={lang}
+          onChange={(_event, next) => next && setLang(next)}
+          aria-label={t('nav.langSwitch')}
+          sx={{
+            display: { xs: 'none', sm: 'inline-flex' },
+            '& .MuiToggleButton-root': {
+              px: 1.25,
+              py: 0.25,
+              fontSize: 12,
+              lineHeight: 1.7,
+              textTransform: 'none',
+            },
+          }}
+        >
+          <ToggleButton value="zh" aria-label="中文">
+            中
+          </ToggleButton>
+          <ToggleButton value="en" aria-label="English">
+            EN
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
+          aria-label={t('nav.langSwitch')}
+          sx={{
+            display: { xs: 'inline-flex', sm: 'none' },
+            minWidth: 0,
+            px: 1,
+            fontSize: 12,
+            lineHeight: 1.7,
+            textTransform: 'none',
+          }}
+        >
+          {lang === 'zh' ? 'EN' : '中'}
+        </Button>
+
+        <Tooltip title={t('nav.github')}>
+          <IconButton
+            component={Link}
+            href={GITHUB}
+            target="_blank"
+            rel="noreferrer"
+            size="small"
+            sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
+          >
             <GitHubMark />
           </IconButton>
         </Tooltip>
@@ -69,9 +124,11 @@ export default function NavBar({ version, downloadUrl }) {
           href={downloadUrl}
           sx={{ ml: 1, borderRadius: 999, px: { xs: 1.75, sm: 2.5 }, minWidth: 0, whiteSpace: 'nowrap' }}
         >
-          下载
           <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-            最新版
+            {t('nav.downloadFull')}
+          </Box>
+          <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+            {t('nav.downloadShort')}
           </Box>
         </Button>
       </Toolbar>

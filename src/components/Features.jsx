@@ -7,81 +7,145 @@ import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
 import LockIcon from '@mui/icons-material/Lock';
 import CloudOffIcon from '@mui/icons-material/CloudOff';
-import AutoFillIcon from '@mui/icons-material/AutoAwesomeMotion';
+import AutoAwesomeMotionIcon from '@mui/icons-material/AutoAwesomeMotion';
 import DevicesIcon from '@mui/icons-material/Devices';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
+import SearchIcon from '@mui/icons-material/Search';
+import BackupIcon from '@mui/icons-material/Backup';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { useI18n } from '../i18n/I18nProvider.jsx';
 
+// 图标与文案解耦：新增一项只需改这里 + i18n/zh.js 与 i18n/en.js 各补两条
 const FEATURES = [
-  {
-    icon: <LockIcon />,
-    title: '本地 AES-GCM 加密',
-    desc: '主密码经 PBKDF2-SHA256（31 万次迭代）派生密钥，数据以 AES-GCM-256 加密后写入本机，本地只存密文。',
-  },
-  {
-    icon: <CloudOffIcon />,
-    title: '全程离线',
-    desc: '不联网、不上传、不经过任何服务器。只有你主动点击「检查更新」时，才会请求一次版本号。',
-  },
-  {
-    icon: <AutoFillIcon />,
-    title: '一键自动填充',
-    desc: '打开登录页，弹窗按域名自动匹配账号密码，点一下即填入表单，兼容 React / Vue 受控输入框。',
-  },
-  {
-    icon: <DevicesIcon />,
-    title: '跨平台',
-    desc: 'Windows / macOS / Linux 均可；Chrome、Edge、Brave 等基于 Chromium 的浏览器都能用。',
-  },
+  { icon: <LockIcon />, key: 'features.aes' },
+  { icon: <CloudOffIcon />, key: 'features.offline' },
+  { icon: <AutoAwesomeMotionIcon />, key: 'features.fill' },
+  { icon: <DevicesIcon />, key: 'features.cross' },
+  { icon: <AccountTreeIcon />, key: 'features.org' },
+  { icon: <AutoFixHighIcon />, key: 'features.generator' },
+  { icon: <HealthAndSafetyIcon />, key: 'features.audit' },
+  { icon: <SearchIcon />, key: 'features.search' },
+  { icon: <BackupIcon />, key: 'features.backup' },
+  { icon: <ContentCopyIcon />, key: 'features.clipboard' },
 ];
 
+// 「还有这些」清单项，同样只存 key
+const EXTRAS = [
+  'badge',
+  'backupNotify',
+  'autoLock',
+  'shortcuts',
+  'contextMenu',
+  'undoDelete',
+  'shareOrg',
+  'tabToggle',
+  'onboarding',
+  'uiLang',
+];
+
+function IconBadge({ children }) {
+  return (
+    <Stack
+      sx={{
+        width: 52,
+        height: 52,
+        borderRadius: '14px',
+        background: 'linear-gradient(135deg,#0EA5A4,#2563EB)',
+        color: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+        mb: 2,
+      }}
+    >
+      {children}
+    </Stack>
+  );
+}
+
+const cardSx = {
+  height: '100%',
+  border: '1px solid',
+  borderColor: 'divider',
+  borderRadius: 4,
+  transition: 'transform .2s, box-shadow .2s',
+  '&:hover': { transform: 'translateY(-6px)', boxShadow: '0 16px 40px rgba(15,23,42,0.12)' },
+};
+
 export default function Features() {
+  const { t } = useI18n();
+
   return (
     <Box sx={{ py: { xs: 6, md: 9 }, background: 'background.default' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" align="center" sx={{ mb: 1 }}>
-          为什么选它
+          {t('features.title')}
         </Typography>
         <Typography variant="body1" align="center" color="text.secondary" sx={{ mb: 5 }}>
-          一个把「安全」和「好用」都做在本地的小工具。
+          {t('features.subtitle')}
         </Typography>
         <Grid container spacing={3}>
           {FEATURES.map((f) => (
-            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={f.title}>
-              <Card
-                elevation={0}
-                sx={{
-                  height: '100%',
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  borderRadius: 4,
-                  transition: 'transform .2s, box-shadow .2s',
-                  '&:hover': { transform: 'translateY(-6px)', boxShadow: '0 16px 40px rgba(15,23,42,0.12)' },
-                }}
-              >
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={f.key}>
+              <Card elevation={0} sx={cardSx}>
                 <CardContent>
-                  <Stack
-                    sx={{
-                      width: 52,
-                      height: 52,
-                      borderRadius: '14px',
-                      background: 'linear-gradient(135deg,#0EA5A4,#2563EB)',
-                      color: '#fff',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mb: 2,
-                    }}
-                  >
-                    {f.icon}
-                  </Stack>
+                  <IconBadge>{f.icon}</IconBadge>
                   <Typography variant="h3" sx={{ mb: 1 }}>
-                    {f.title}
+                    {t(`${f.key}.title`)}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {f.desc}
+                    {t(`${f.key}.desc`)}
                   </Typography>
                 </CardContent>
               </Card>
             </Grid>
           ))}
+
+          {/* 末行右侧的宽面板：桌面下与第 10 张卡正好填满一行，不留空位 */}
+          <Grid size={{ xs: 12, md: 8 }}>
+            <Card elevation={0} sx={cardSx}>
+              <CardContent>
+                <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1 }}>
+                  <CheckCircleIcon sx={{ color: 'primary.main' }} />
+                  <Typography variant="h3">{t('features.extrasTitle')}</Typography>
+                </Stack>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  {t('features.extrasDesc')}
+                </Typography>
+                <Box
+                  component="ul"
+                  sx={{
+                    m: 0,
+                    pl: 0,
+                    listStyle: 'none',
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                    gap: 1.25,
+                  }}
+                >
+                  {EXTRAS.map((key) => (
+                    <Stack key={key} component="li" direction="row" spacing={1} alignItems="flex-start">
+                      <Box
+                        sx={{
+                          flexShrink: 0,
+                          width: 6,
+                          height: 6,
+                          borderRadius: '50%',
+                          bgcolor: 'primary.main',
+                          mt: 1,
+                        }}
+                      />
+                      <Typography variant="body2" color="text.secondary">
+                        {t(`features.extra.${key}`)}
+                      </Typography>
+                    </Stack>
+                  ))}
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
       </Container>
     </Box>

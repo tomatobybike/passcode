@@ -7,21 +7,13 @@ import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { useI18n } from '../i18n/I18nProvider.jsx';
 
-const STEPS = {
-  Windows: [
-    '把收到的 passcode-v*.zip 解压到一个固定目录，例如 C:\\Users\\你的用户名\\chrome-extensions\\passcode\\',
-    'Chrome 地址栏输入 chrome://extensions 并回车，打开右上角「开发者模式」',
-    '点左上角「加载已解压的扩展程序」，选择刚解压出来的 passcode 目录',
-    '拼图图标 → 找到「Passcode 密码箱」→「在工具栏中显示」，点击图标设置主密码即可',
-  ],
-  macOS: [
-    '把收到的 passcode-v*.zip 解压到一个固定目录，例如 ~/chrome-extensions/passcode/',
-    'Chrome 地址栏输入 chrome://extensions 并回车，打开右上角「开发者模式」',
-    '点左上角「加载已解压的扩展程序」，选择刚解压出来的 passcode 目录',
-    '拼图图标 → 找到「Passcode 密码箱」→「在工具栏中显示」，点击图标设置主密码即可',
-  ],
-};
+// 文案 key 而非文案本身：翻译在组件内按当前语言取
+const COLUMNS = [
+  { titleKey: 'install.winTitle', stepKeys: ['install.win1', 'install.win2', 'install.win3', 'install.win4'] },
+  { titleKey: 'install.macTitle', stepKeys: ['install.mac1', 'install.mac2', 'install.mac3', 'install.mac4'] },
+];
 
 function StepList({ title, steps }) {
   return (
@@ -63,30 +55,30 @@ function StepList({ title, steps }) {
 }
 
 export default function InstallSteps() {
+  const { t } = useI18n();
+
   return (
     <Box sx={{ py: { xs: 6, md: 9 }, background: '#fff' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" align="center" sx={{ mb: 1 }}>
-          安装步骤
+          {t('install.title')}
         </Typography>
         <Typography variant="body1" align="center" color="text.secondary" sx={{ mb: 4 }}>
-          解压到固定目录后，覆盖更新即可，数据不会丢。
+          {t('install.subtitle')}
         </Typography>
         <Alert
           severity="warning"
           icon={<FiberManualRecordIcon />}
           sx={{ maxWidth: 820, mx: 'auto', mb: 4, borderRadius: 3, overflowWrap: 'anywhere' }}
         >
-          <strong>更新必须覆盖到同一个目录。</strong> 解压到新目录（如 passcode-v2/）会被 Chrome 当作全新扩展，
-          旧数据读不到、像「密码全没了」。正确做法：新 zip 解压覆盖原目录 → 回 chrome://extensions 点扩展卡片上的「刷新」。
+          <strong>{t('install.warnStrong')}</strong> {t('install.warnRest')}
         </Alert>
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <StepList title="Windows" steps={STEPS.Windows} />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <StepList title="macOS / Linux" steps={STEPS.macOS} />
-          </Grid>
+          {COLUMNS.map((column) => (
+            <Grid size={{ xs: 12, md: 6 }} key={column.titleKey}>
+              <StepList title={t(column.titleKey)} steps={column.stepKeys.map((key) => t(key))} />
+            </Grid>
+          ))}
         </Grid>
       </Container>
     </Box>

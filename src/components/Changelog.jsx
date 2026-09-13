@@ -3,6 +3,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import { useI18n } from '../i18n/I18nProvider.jsx';
 
 function Entry({ entry, last }) {
   return (
@@ -38,15 +39,17 @@ function Entry({ entry, last }) {
 }
 
 export default function Changelog({ version, items }) {
+  const { t } = useI18n();
+  // 更新日志内容由 changelog.json 提供（中英共用一份），这里只负责标题与空状态
   const list = items?.length
     ? items
-    : [{ version: version?.version || '—', date: version?.releaseDate || '', notes: ['（暂无更新日志）'] }];
+    : [{ version: version?.version || '—', date: version?.releaseDate || '', notes: [t('changelog.empty')] }];
 
   return (
     <Box sx={{ py: { xs: 6, md: 9 }, background: 'background.default' }}>
       <Container maxWidth="md">
         <Typography variant="h2" align="center" sx={{ mb: 4 }}>
-          更新日志
+          {t('changelog.title')}
         </Typography>
         {list.map((entry, i) => (
           <Entry key={`${entry.version}-${i}`} entry={entry} last={i === list.length - 1} />
