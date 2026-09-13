@@ -31,7 +31,7 @@ const FAQS = [
 
 export default function Faq() {
   return (
-    <Box sx={{ py: 9, background: '#fff' }}>
+    <Box sx={{ py: { xs: 6, md: 9 }, background: '#fff' }}>
       <Container maxWidth="md">
         <Typography variant="h2" align="center" sx={{ mb: 4 }}>
           常见问题

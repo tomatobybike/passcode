@@ -43,7 +43,7 @@ export default function Changelog({ version, items }) {
     : [{ version: version?.version || '—', date: version?.releaseDate || '', notes: ['（暂无更新日志）'] }];
 
   return (
-    <Box sx={{ py: 9, background: 'background.default' }}>
+    <Box sx={{ py: { xs: 6, md: 9 }, background: 'background.default' }}>
       <Container maxWidth="md">
         <Typography variant="h2" align="center" sx={{ mb: 4 }}>
           更新日志

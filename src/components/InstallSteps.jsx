@@ -51,7 +51,7 @@ function StepList({ title, steps }) {
               >
                 {i + 1}
               </Box>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="text.secondary" sx={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                 {s}
               </Typography>
             </Stack>
@@ -64,7 +64,7 @@ function StepList({ title, steps }) {
 
 export default function InstallSteps() {
   return (
-    <Box sx={{ py: 9, background: '#fff' }}>
+    <Box sx={{ py: { xs: 6, md: 9 }, background: '#fff' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" align="center" sx={{ mb: 1 }}>
           安装步骤
@@ -75,16 +75,16 @@ export default function InstallSteps() {
         <Alert
           severity="warning"
           icon={<FiberManualRecordIcon />}
-          sx={{ maxWidth: 820, mx: 'auto', mb: 4, borderRadius: 3 }}
+          sx={{ maxWidth: 820, mx: 'auto', mb: 4, borderRadius: 3, overflowWrap: 'anywhere' }}
         >
           <strong>更新必须覆盖到同一个目录。</strong> 解压到新目录（如 passcode-v2/）会被 Chrome 当作全新扩展，
           旧数据读不到、像「密码全没了」。正确做法：新 zip 解压覆盖原目录 → 回 chrome://extensions 点扩展卡片上的「刷新」。
         </Alert>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <StepList title="Windows" steps={STEPS.Windows} />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <StepList title="macOS / Linux" steps={STEPS.macOS} />
           </Grid>
         </Grid>

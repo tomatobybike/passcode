@@ -8,8 +8,8 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Link from '@mui/material/Link';
 import SvgIcon from '@mui/material/SvgIcon';
-import ShieldIcon from '@mui/icons-material/Shield';
 import DownloadIcon from '@mui/icons-material/Download';
+import logo from '../assets/logo-128.png';
 
 const GITHUB = 'https://github.com/tomatobybike/passcode';
 
@@ -34,13 +34,28 @@ export default function NavBar({ version, downloadUrl }) {
         color: 'text.primary',
       }}
     >
-      <Toolbar sx={{ maxWidth: 1200, width: '100%', mx: 'auto' }}>
-        <ShieldIcon sx={{ color: 'primary.main', mr: 1 }} />
-        <Typography variant="h6" sx={{ fontWeight: 700, flexShrink: 0 }}>
+      <Toolbar sx={{ maxWidth: 1200, width: '100%', mx: 'auto', px: { xs: 1.5, sm: 3 }, gap: { xs: 0.5, sm: 1 } }}>
+        <Box
+          component="img"
+          src={logo}
+          alt="Passcode"
+          sx={{ width: { xs: 24, sm: 28 }, height: { xs: 24, sm: 28 }, mr: 1, flexShrink: 0 }}
+        />
+        <Typography
+          variant="h6"
+          noWrap
+          sx={{ fontWeight: 700, fontSize: { xs: '0.95rem', sm: '1.25rem' }, minWidth: 0 }}
+        >
           Passcode 密码箱
         </Typography>
         {version && (
-          <Chip size="small" label={`v${version}`} color="primary" variant="outlined" sx={{ ml: 1.5 }} />
+          <Chip
+            size="small"
+            label={`v${version}`}
+            color="primary"
+            variant="outlined"
+            sx={{ ml: 1.5, display: { xs: 'none', sm: 'inline-flex' } }}
+          />
         )}
         <Box sx={{ flexGrow: 1 }} />
         <Tooltip title="GitHub 仓库">
@@ -52,9 +67,12 @@ export default function NavBar({ version, downloadUrl }) {
           variant="contained"
           startIcon={<DownloadIcon />}
           href={downloadUrl}
-          sx={{ ml: 1, borderRadius: 999, px: 2.5 }}
+          sx={{ ml: 1, borderRadius: 999, px: { xs: 1.75, sm: 2.5 }, minWidth: 0, whiteSpace: 'nowrap' }}
         >
-          下载最新版
+          下载
+          <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+            最新版
+          </Box>
         </Button>
       </Toolbar>
     </AppBar>

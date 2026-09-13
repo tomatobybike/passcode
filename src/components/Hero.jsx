@@ -13,8 +13,8 @@ export default function Hero({ version, downloadUrl }) {
   return (
     <Box
       sx={{
-        pt: '96px',
-        pb: 10,
+        pt: { xs: '88px', md: '96px' },
+        pb: { xs: 6, md: 10 },
         background: heroGradient,
         color: '#fff',
         position: 'relative',
@@ -40,7 +40,7 @@ export default function Hero({ version, downloadUrl }) {
             <Typography variant="h1" sx={{ color: '#fff', mb: 2 }}>
               Passcode 密码箱
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 400, color: 'rgba(255,255,255,0.92)', maxWidth: 520 }}>
+            <Typography variant="h6" sx={{ fontWeight: 400, color: 'rgba(255,255,255,0.92)', maxWidth: 520, fontSize: { xs: '0.95rem', sm: '1.05rem' } }}>
               本地加密的 Chrome 密码与常用网址管理器。数据只在你这台电脑，不联网、不上传、不经过任何服务器。
             </Typography>
             <Stack direction="row" spacing={2} sx={{ mt: 4 }} alignItems="center" flexWrap="wrap">

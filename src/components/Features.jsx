@@ -35,7 +35,7 @@ const FEATURES = [
 
 export default function Features() {
   return (
-    <Box sx={{ py: 9, background: 'background.default' }}>
+    <Box sx={{ py: { xs: 6, md: 9 }, background: 'background.default' }}>
       <Container maxWidth="lg">
         <Typography variant="h2" align="center" sx={{ mb: 1 }}>
           为什么选它
@@ -45,7 +45,7 @@ export default function Features() {
         </Typography>
         <Grid container spacing={3}>
           {FEATURES.map((f) => (
-            <Grid item xs={12} sm={6} md={3} key={f.title}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={f.title}>
               <Card
                 elevation={0}
                 sx={{
