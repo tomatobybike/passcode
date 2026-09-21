@@ -103,6 +103,14 @@ export const en = {
   'features.clipboard.desc':
     'After you copy an account or password the clipboard is wiped 30 seconds later (2 minutes for notes), with a live countdown — and it is still cleared after you close the popup.',
 
+  'features.clipHistory.title': 'Clipboard history',
+  'features.clipHistory.desc':
+    'Records the text you copy in web pages so you can copy it again from the popup — the newest 20 items, oldest dropped beyond that. Send any of them to a note and it becomes a searchable vault entry that rides along with your backups.',
+
+  'features.refresh.title': 'Scheduled reloads',
+  'features.refresh.desc':
+    'Give an intranet dashboard a URL and an interval and it reloads itself on schedule. A small pill on matching pages shows the countdown and lets you stop or resume that task right there.',
+
   'features.extrasTitle': 'And also',
   'features.extrasDesc': 'The small touches you only notice once you start using it.',
 
@@ -111,7 +119,7 @@ export const en = {
   'features.extra.backupNotify':
     'Backup reminders with optional desktop notifications (30+ days without an export, or after a master-password change) — notifications never contain accounts or URLs',
   'features.extra.autoLock':
-    'Auto-locks after 15 minutes idle, or lock it yourself anytime; the unlocked key stays in session storage only',
+    'Re-locks when the session window expires (24 hours by default, adjustable in the manager), or lock it yourself anytime; the unlock key stays in memory only and is gone once you close the browser',
   'features.extra.shortcuts':
     'Shortcuts: Ctrl+Shift+P opens the popup, Alt+L locks instantly (⌘ / ⌥ on macOS; remap them in chrome://extensions/shortcuts)',
   'features.extra.contextMenu':

@@ -15,11 +15,16 @@ import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
 import SearchIcon from '@mui/icons-material/Search';
 import BackupIcon from '@mui/icons-material/Backup';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import HistoryIcon from '@mui/icons-material/History';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { brand, enterSx, ghostCard, radius } from '../theme.js';
 import { useI18n } from '../i18n/I18nProvider.jsx';
 
 // 图标与文案解耦：新增一项只需改这里 + i18n/zh.js 与 i18n/en.js 各补两条
+//
+// 张数必须保持 12 的倍数逻辑：桌面每行 3 张（md:4），末尾的「还有这些」面板占整行。
+// 12 张 = 4 个满行 + 面板整行，首尾都没有空位；一旦变成 11 张，末行只剩 1 个 4 格空位。
 const FEATURES = [
   { icon: <LockIcon />, key: 'features.aes' },
   { icon: <CloudOffIcon />, key: 'features.offline' },
@@ -31,6 +36,8 @@ const FEATURES = [
   { icon: <SearchIcon />, key: 'features.search' },
   { icon: <BackupIcon />, key: 'features.backup' },
   { icon: <ContentCopyIcon />, key: 'features.clipboard' },
+  { icon: <HistoryIcon />, key: 'features.clipHistory' },
+  { icon: <AutorenewIcon />, key: 'features.refresh' },
 ];
 
 // 「还有这些」清单项，同样只存 key
@@ -99,8 +106,9 @@ export default function Features() {
             </Grid>
           ))}
 
-          {/* 末行右侧的宽面板：桌面下与第 10 张卡正好填满一行，不留空位 */}
-          <Grid size={{ xs: 12, md: 8 }}>
+          {/* 「还有这些」面板：上面 12 张卡在桌面下正好排满 4 行，这里占满第 5 行整行，
+              首尾都不留空位。清单做成 3 列，整行宽度下每列约 1/3，长句不至于拉成一整行 */}
+          <Grid size={{ xs: 12, md: 12 }}>
             <Card elevation={0} sx={(theme) => ({ ...ghostCard(theme), ...enterSx(0.1) })}>
               <CardContent sx={{ p: { xs: 2.5, md: 3 }, '&:last-child': { pb: { xs: 2.5, md: 3 } } }}>
                 <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1 }}>
@@ -117,7 +125,7 @@ export default function Features() {
                     pl: 0,
                     listStyle: 'none',
                     display: 'grid',
-                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
                     gap: 1.25,
                   }}
                 >

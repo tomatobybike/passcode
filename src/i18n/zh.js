@@ -101,6 +101,14 @@ export const zh = {
   'features.clipboard.desc':
     '复制账号或密码后，剪贴板会在 30 秒后自动清空（便签为 2 分钟），顶栏显示剩余秒数；关掉弹窗也会由后台兜底清除。',
 
+  'features.clipHistory.title': '剪贴板历史',
+  'features.clipHistory.desc':
+    '自动记下你在网页里复制过的文本，弹窗顶栏点一下就能重新复制回剪贴板；最多保留最近 20 条，超出淘汰最旧的一条。想长期留住的片段点「存入便签」，即刻转成可搜索、可备份的便签条目。',
+
+  'features.refresh.title': '自动刷新',
+  'features.refresh.desc':
+    '给内网看板这类页面配一条「网址 + 间隔」，到点自动重载，不用一直手点刷新；命中页面的右下角会出现浮标显示下次刷新还剩几秒，可就地停止或恢复。',
+
   'features.extrasTitle': '还有这些',
   'features.extrasDesc': '细节处的体贴，用起来才知道。',
 
@@ -109,7 +117,7 @@ export const zh = {
   'features.extra.backupNotify':
     '备份提醒与可选桌面通知：超过 30 天未导出、或改过主密码都会提醒，通知内容不含任何账号或网址',
   'features.extra.autoLock':
-    '空闲 15 分钟自动锁定，也可随时手动锁定；解锁密钥不落盘，关掉浏览器即失效',
+    '按会话时长自动上锁（默认 24 小时，可在管理页调整），也可随时手动锁定；解锁密钥只留在内存里，关掉浏览器即失效',
   'features.extra.shortcuts':
     '快捷键：Ctrl+Shift+P 打开弹窗、Alt+L 立即锁定（macOS 映射为 ⌘ / ⌥，可在 chrome://extensions/shortcuts 改键）',
   'features.extra.contextMenu': '网页右键菜单：填充账号与密码、只填充密码、生成并复制强密码',
